@@ -1,8 +1,13 @@
-// import * as articles from './articles/csvjson.json'
-
 const express = require('express')
+const session = require('express-session')
+const FileStore = require('session-file-store')(session)
+const passport = require('passport')
 const app = express()
 const port = 3000
+
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
+
 const articlesJSON = require('./articles/csvjson.json')
 const users = [
     {
@@ -33,14 +38,19 @@ const users = [
     
 ]
 
+const statusOk = 'statusOk'
+
 app.get('/articles', (req, res) => {
     res.send(articlesJSON)
+})
+
+app.get('/admin', (req, res) => {
+    res.send("admin page")
 })
 
 app.get('/:id', (req, res) => {
     res.send(articlesJSON.find(current => current.SKU == req.params.id))
 })
-
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
