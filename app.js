@@ -8,6 +8,20 @@ const port = 3000
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
+app.use(
+    session({
+        secret: 'qwerty',
+        store: new FileStore(),
+        cookie: {
+            path: '/',
+            httpOnly: true,
+            maxAge: 60 * 60 * 1000,
+        },
+        resave: false,
+        saveUninitialized: false,
+    })
+)
+
 const articlesJSON = require('./articles/csvjson.json')
 const users = [
     {
@@ -38,7 +52,9 @@ const users = [
     
 ]
 
-const statusOk = 'statusOk'
+require('./js/config-passport')
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.get('/articles', (req, res) => {
     res.send(articlesJSON)
@@ -47,6 +63,25 @@ app.get('/articles', (req, res) => {
 app.get('/admin', (req, res) => {
     res.send("admin page")
 })
+
+app.get('/login', (req, res, next) => {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { 
+      return next(err); 
+    } 
+    if (!user) { 
+      // return res.redirect('/login'); 
+      return res.send('Укажите правильный email или пароль!'); 
+    }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); 
+      }
+      // return res.redirect('/users/' + user.username);
+      return res.redirect('/admin');
+    });
+  })(req, res, next);
+})
+
 
 app.get('/:id', (req, res) => {
     res.send(articlesJSON.find(current => current.SKU == req.params.id))
