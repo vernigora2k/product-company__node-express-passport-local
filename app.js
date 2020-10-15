@@ -56,20 +56,13 @@ require('./js/config-passport')
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/articles', (req, res) => {
-    res.send(articlesJSON)
-})
-
-app.get('/admin', (req, res) => {
-    res.send("admin page")
-})
-
-app.get('/login', (req, res, next) => {
+app.post('/login', (req, res, next) => {
   passport.authenticate('local', function(err, user, info) {
     if (err) { 
       return next(err); 
     } 
     if (!user) { 
+      console.log(user)
       // return res.redirect('/login'); 
       return res.send('Укажите правильный email или пароль!'); 
     }
@@ -82,6 +75,25 @@ app.get('/login', (req, res, next) => {
   })(req, res, next);
 })
 
+const auth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    next()
+  } else {
+    return res.redirect('/')
+  }
+}
+
+app.get('/', (req, res) => {
+    res.send('base page')
+})
+
+app.get('/articles', (req, res) => {
+    res.send(articlesJSON)
+})
+
+app.get('/admin', auth, (req, res) => {
+  res.send("admin page")
+})
 
 app.get('/:id', (req, res) => {
     res.send(articlesJSON.find(current => current.SKU == req.params.id))
@@ -90,3 +102,5 @@ app.get('/:id', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
+
+
