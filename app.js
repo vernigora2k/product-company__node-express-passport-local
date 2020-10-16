@@ -87,7 +87,7 @@ app.get('/', (req, res) => {
     res.send('base page')
 })
 
-app.get('/articles', (req, res) => {
+app.get('/articles', auth, (req, res) => {
     res.send(articlesJSON)
 })
 
