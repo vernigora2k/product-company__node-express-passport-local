@@ -48,7 +48,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
   console.log('deserialization ', id)
   const user = users.find(current => current.id == id) 
-  // const user = userDB.id === id ? userDB : false
   done(null, user)
 })
 
@@ -57,6 +56,3 @@ passport.use(new LocalStrategy({usernameField: 'email'},
     return done(null, users.find(current => current.email == email && current.password == password))
   }
 ));
-
-
-
