@@ -7,6 +7,11 @@ const port = 3000
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+const corsOptions = {
+  origin: 'http://localhost:8080',
+  credentials:  true
+}
+app.use(require('cors')(corsOptions))
 
 app.use(
     session({
@@ -49,12 +54,13 @@ const users = [
       "pass": "5555",
       "verified": true,
     },
-    
 ]
 
 require('./js/config-passport')
 app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.session({
+  cookie: {secure: false}
+}))
 
 app.post('/login', (req, res, next) => {
   passport.authenticate('local', function(err, user, info) {
@@ -70,12 +76,14 @@ app.post('/login', (req, res, next) => {
       if (err) { return next(err); 
       }
       // return res.redirect('/users/' + user.username);
-      return res.redirect('/admin');
+      return res.redirect('/articles');
     });
   })(req, res, next);
 })
 
 const auth = (req, res, next) => {
+  console.log('req')
+  console.log(req.isAuthenticated())
   if (req.isAuthenticated()) {
     next()
   } else {
@@ -87,6 +95,9 @@ app.get('/', (req, res) => {
     res.send('base page')
 })
 
+// app.get('/articles', auth, (req, res) => {
+//     res.send(articlesJSON)
+// })
 app.get('/articles', auth, (req, res) => {
     res.send(articlesJSON)
 })

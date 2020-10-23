@@ -53,6 +53,8 @@ passport.deserializeUser(function(id, done) {
 
 passport.use(new LocalStrategy({usernameField: 'email'},
   function(email, password, done) {
+    console.log(email)
+    console.log(password)
     return done(null, users.find(current => current.email == email && current.password == password))
   }
 ));
