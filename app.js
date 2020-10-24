@@ -70,13 +70,14 @@ app.post('/login', (req, res, next) => {
     if (!user) { 
       console.log(user)
       // return res.redirect('/login'); 
-      return res.send('Укажите правильный email или пароль!'); 
+      return res.send({wrong_email_or_pass: 'Укажите правильный email или пароль!'}); 
     }
     req.logIn(user, function(err) {
       if (err) { return next(err); 
       }
       // return res.redirect('/users/' + user.username);
-      return res.redirect('/articles');
+      // return res.redirect('/articles');
+      return res.send({success: `Вы вошли в вашу учечную запись ${user.email}`}); 
     });
   })(req, res, next);
 })
