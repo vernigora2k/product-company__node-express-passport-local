@@ -93,7 +93,7 @@ const auth = (req, res, next) => {
 }
 
 app.get('/', (req, res) => {
-    res.send('base page')
+    res.send({message: 'base page'})
 })
 
 // app.get('/articles', auth, (req, res) => {
@@ -109,7 +109,8 @@ app.get('/admin', auth, (req, res) => {
 
 app.get('/logout', function (req, res){
   req.session.destroy(function (err) {
-    res.redirect('/'); 
+    // res.redirect('/login'); 
+    res.send({logout: `Вы вышли из учетной записи`}); 
   });
 });
 
